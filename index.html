@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaBots - Custom Discord Bots</title>
+<meta name="description" content="Professional custom Discord bots for every server. Fast delivery, secure payments, and premium support.">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+  (function(){
+      // Replace with your EmailJS Public Key
+      emailjs.init("service_8lqx9nw");
+  })();
+</script>
+
+<!-- PayPal JavaScript SDK (Replace YOUR_PAYPAL_CLIENT_ID with your actual Client ID) -->
+<script src="https://www.paypal.com/sdk/js?client-id=ATDwZ-AJ6m0byKitOzeiKfMxlIEzla-0EeXhIryk7-n794yR9DM52Os_J8l3Mr5Yl7oyfmkSMsiCcRvH&currency=USD"></script>
+
+</head>
+<body>
+<div class="loader" id="loader">
+  <img src="assets/logo.png" alt="NovaBots">
+  <div class="loader-bar"><span></span></div>
+</div>
+
+<canvas id="particles"></canvas>
+
+<div class="background">
+  <div class="circle one"></div>
+  <div class="circle two"></div>
+  <div class="circle three"></div>
+</div>
+
+<nav>
+  <div class="logo">
+    <img src="assets/logo.png" alt="NovaBots Logo">
+    <span>NovaBots</span>
+  </div>
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#products">Choose Your Bot</a></li>
+    <li><a href="#why">Why NovaBots?</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#about">About Me</a></li>
+    <li><a href="https://discord.gg/7qafuMk7N" target="_blank">Join Discord</a></li>
+  </ul>
+  <button class="cart-icon" id="cartToggle"><span class="cart-count" id="cartCount">0</span></button>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-left">
+    <span class="tag">PROFESSIONAL DISCORD DEVELOPMENT</span>
+    <h1>Build The Perfect <span>Discord Bot.</span></h1>
+    <p>Custom Discord bots built specifically for your community. Secure. Fast. Reliable. Modern.</p>
+    <div class="buttons">
+      <a href="#products" class="primary">Choose Your Bot</a>
+      <a href="https://discord.gg/7qafuMk7N" target="_blank" class="secondary">Join Discord</a>
+    </div>
+  </div>
+  <div class="hero-right"><img src="assets/logo.png" alt="NovaBots"></div>
+</section>
+
+<section id="products">
+  <div class="section-title">
+    <span class="section-tag">NOVABOTS STORE</span>
+    <h2>Choose Your Custom Bot</h2>
+    <p>Browse our premium Discord bot modules.</p>
+  </div>
+  <div class="search-container"><input type="text" id="searchInput" placeholder="Search products..."></div>
+  <div class="category-buttons" id="categoryButtons">
+    <button class="category active" data-category="all">All</button>
+    <button class="category" data-category="moderation">Moderation</button>
+    <button class="category" data-category="tickets">Tickets</button>
+    <button class="category" data-category="welcome">Welcome</button>
+    <button class="category" data-category="economy">Economy</button>
+    <button class="category" data-category="leveling">Leveling</button>
+    <button class="category" data-category="autorole">Auto Roles</button>
+    <button class="category" data-category="logging">Logging</button>
+    <button class="category" data-category="utility">Utility</button>
+  </div>
+  <div class="product-grid" id="productGrid"></div>
+  <p class="no-results" id="noResults">No bots match your search. Try another term or category.</p>
+</section>
+
+<section id="why">
+  <div class="section-title">
+    <span class="section-tag">WHY NOVABOTS</span>
+    <h2>Why Choose NovaBots?</h2>
+    <p>What you get with every single order.</p>
+  </div>
+  <div class="why-grid" id="whyGrid"></div>
+</section>
+
+<section id="stats">
+  <div class="stats-grid" id="statsGrid"></div>
+</section>
+
+<section id="safe">
+  <h2>Is It Safe?</h2>
+  <div class="safe-box">
+    <div>No Malware</div>
+    <div>Custom Coded</div>
+    <div>Secure Payments</div>
+    <div>Fast Support</div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="section-title">
+    <span class="section-tag">FAQ</span>
+    <h2>Frequently Asked Questions</h2>
+  </div>
+  <div class="faq-list" id="faqList"></div>
+</section>
+
+<section id="about">
+  <h2>About NovaBots</h2>
+  <p>Hi! I'm <strong>DrPhasmo</strong>. I create premium custom Discord bots built exactly how you want them. Every project is coded with performance, reliability and security in mind.</p>
+</section>
+
+<footer>
+  <h3>Ready To Upgrade Your Server?</h3>
+  <a href="https://discord.gg/7qafuMk7N" target="_blank">Join Our Discord</a>
+  <p>&copy; 2026 NovaBots. All rights reserved.</p>
+</footer>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-header"><h3>Your Cart</h3><button id="cartClose">&times;</button></div>
+  <div class="cart-items" id="cartItems"><p class="empty">Your cart is empty.</p></div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>Total</span><h4 id="cartTotal">0</h4></div>
+    <button class="buy-btn" id="checkoutBtn">Checkout</button>
+  </div>
+</aside>
+
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal-box checkout-box">
+    <h3>Complete Your Purchase</h3>
+    <p>Select a payment method below to complete your order:</p>
+    
+    <!-- PayPal Buttons Render Here -->
+    <div id="paypal-button-container" style="margin-top: 20px;"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
