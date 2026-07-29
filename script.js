@@ -121,7 +121,7 @@ const products = [
   { id: "leveling", name: "Leveling System", category: "leveling", price: 5, badge: null, image: "assets/logo.png", tagline: "Earn XP by talking, customize rank cards & leaderboards." },
   { id: "moderation", name: "Moderation Commands", category: "moderation", price: 8, badge: "popular", image: "assets/moderation.png", tagline: "Full moderation suite: ban, kick, mute, timeout, clear, etc." },
   { id: "economy", name: "Economy System", category: "economy", price: 10, badge: null, image: "assets/logo.png", tagline: "Full currency system with daily claims, shop, work, and games." },
-  { id: "economy", name: "24/7 Bot Hosting", category: "hosting", price: 5, badge: null, image: "assets/logo.png", tagline: "We host your Discord bot 24/7 for just €5/month." }
+  { id: "economy", name: "24/7 Bot Hosting", category: "hosting", price: 3, badge: null, image: "assets/logo.png", tagline: "We host your Discord bot 24/7 for just €3/month." }
 ];
 
 const productGrid = document.getElementById("productGrid");
