@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaBots - Ticket Admin</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0a0c16;
+    color: #fff;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+  h1 { font-size: 24px; margin-bottom: 20px; }
+
+  #loginBox {
+    max-width: 360px;
+    margin: 100px auto;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    padding: 30px;
+    text-align: center;
+  }
+  #loginBox input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.05);
+    color: #fff;
+    outline: none;
+    margin: 16px 0;
+    font-size: 15px;
+  }
+  #loginBox button, .close-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #5865f2;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  .close-btn { width: auto; padding: 8px 16px; background: #ff5b5b; }
+  #loginError { color: #ff6b6b; font-size: 14px; min-height: 18px; margin-top: 4px; }
+
+  #dashboard { display: none; }
+  .ticket {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .ticket h3 { margin: 0 0 8px; }
+  .ticket p { margin: 4px 0; opacity: .85; font-size: 14px; }
+  .ticket .row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+  .empty { opacity: .6; text-align: center; margin-top: 60px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div id="loginBox">
+    <h1>Staff Login</h1>
+    <input type="password" id="passwordInput" placeholder="Enter password">
+    <button id="loginBtn">Unlock Tickets</button>
+    <p id="loginError"></p>
+  </div>
+
+  <div id="dashboard">
+    <h1>🎫 Open Tickets</h1>
+    <div id="ticketList"></div>
+    <p class="empty" id="emptyMsg" style="display:none;">No open tickets right now.</p>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAmyr8BIiYAKp1Z2o448mm4MN7y-qYtvgo",
+    authDomain: "nova-f6057.firebaseapp.com",
+    projectId: "nova-f6057",
+    storageBucket: "nova-f6057.firebasestorage.app",
+    messagingSenderId: "323578355882",
+    appId: "1:323578355882:web:31ff7c391a692f58a8f0d3"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // This fixed email is just an internal identifier for the one staff login —
+  // customers never see or use it. The real gate is the password.
+  const ADMIN_EMAIL = "staff@novabots-internal.com";
+
+  const loginBox = document.getElementById("loginBox");
+  const dashboard = document.getElementById("dashboard");
+  const passwordInput = document.getElementById("passwordInput");
+  const loginBtn = document.getElementById("loginBtn");
+  const loginError = document.getElementById("loginError");
+  const ticketList = document.getElementById("ticketList");
+  const emptyMsg = document.getElementById("emptyMsg");
+
+  loginBtn.addEventListener("click", login);
+  passwordInput.addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
+
+  function login() {
+    const pw = passwordInput.value.trim();
+    if (!pw) return;
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Checking...";
+    auth.signInWithEmailAndPassword(ADMIN_EMAIL, pw)
+      .then(() => {
+        loginBox.style.display = "none";
+        dashboard.style.display = "block";
+        loadTickets();
+      })
+      .catch(() => {
+        loginError.textContent = "Incorrect password.";
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Unlock Tickets";
+      });
+  }
+
+  function loadTickets() {
+    db.collection("tickets").where("status", "==", "open").orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        ticketList.innerHTML = "";
+        if (snapshot.empty) {
+          emptyMsg.style.display = "block";
+          return;
+        }
+        emptyMsg.style.display = "none";
+        snapshot.forEach((doc) => {
+          const t = doc.data();
+          const div = document.createElement("div");
+          div.className = "ticket";
+          div.innerHTML = `
+            <h3>${escapeHtml(t.name || "Unknown")}</h3>
+            <p><strong>Email:</strong> ${escapeHtml(t.email || "-")}</p>
+            <p><strong>Discord:</strong> ${escapeHtml(t.discord || "-")}</p>
+            <p><strong>Order:</strong> ${escapeHtml(t.order || "-")}</p>
+            <p><strong>Total:</strong> €${escapeHtml(t.total || "0.00")}</p>
+            <div class="row">
+              <span></span>
+              <button class="close-btn" data-id="${doc.id}">Close Ticket</button>
+            </div>
+          `;
+          ticketList.appendChild(div);
+        });
+        ticketList.querySelectorAll(".close-btn").forEach((btn) => {
+          btn.addEventListener("click", () => closeTicket(btn.dataset.id));
+        });
+      });
+  }
+
+  function closeTicket(id) {
+    db.collection("tickets").doc(id).update({ status: "closed" });
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+</script>
+</body>
+</html>
